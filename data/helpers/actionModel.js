@@ -11,9 +11,8 @@ module.exports = {
         .first()
         .then(action => mappers.actionToBody(action));
     }
-
+    // if (!action) return null;
     return query.then(actions => {
-      // if (!actions) return null;
       return actions.map(action => mappers.actionToBody(action));
     });
   },
