@@ -23,8 +23,44 @@ server.get('/projects', (req, res) => {
 
         res.status(500).json({ error: 'The projects information could not be retrieved.' });
     })
-})
+});
 
+server.get('/projects/:id', (req, res) => {
+    dbProject.get(req.params.id)
+    .then(project => {
+        // console.log(project);
+        if (!project) {
+            res.status(404).json({ message: 'The project with the specified ID does not exist.' });
+            return;
+        }
+        res.status(200).json(project);
+    })
+    .catch(err => {
+        console.error('error', err);
+        res.status(500).json({ error: 'The project information could not be retrieved.'})
+    })
+});
+
+server.post('/projects', (req, res) => {
+    const { name, description, completed } = req.body;
+    if (!name || !description) {
+        res.status(400).json({ errorMessage: 'Both name and description are required. Please complete both fields and try again.' });
+        return;
+    }
+    dbProject.insert({
+        name,
+        description,
+        completed
+    })
+    .then(response => {
+        res.status(201).json(req.body);
+    })
+    .catch(error => {
+        console.error('error', err);
+        res.status(500).json({ error: 'There was an error while saving the project to the database' });
+        return;
+    })
+});
 
 
 server.listen(7500, () => console.log('/n== API on port 7.5k ==/n') );
