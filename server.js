@@ -3,8 +3,22 @@ const server = express();
 const dbProject = require('./data/helpers/projectModel.js');
 const dbAction = require('./data/helpers/actionModel.js');
 
+// custom middleware ---------------------
+function validProjectId(req, res, next) {
+    const { project_id } = req.body;
+    dbProject.get(project_id)
+    .then(project => {
+        console.log(project);
+        if (!project) {
+            res.status(404).json({ message: 'The project with the specified ID does not exist. Please enter a valid project_id and try again.' });
+            return;
+        } else {
+            next();
+        }
+    })
+};
 
-// configure middleware
+// configure middleware ---------------
 server.use(express.json());
 
 
@@ -141,7 +155,7 @@ server.get('/actions/:id', (req, res) => {
     })
 });
 
-server.post('/actions', (req, res) => {
+server.post('/actions', validProjectId, (req, res) => {
     const { description, notes, completed, project_id } = req.body;
     if (!description || !notes) {
         res.status(400).json({ errorMessage: 'Please provide both a description and notes for this action.' });

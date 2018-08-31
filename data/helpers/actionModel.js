@@ -13,6 +13,7 @@ module.exports = {
     }
 
     return query.then(actions => {
+      // if (!actions) return null;
       return actions.map(action => mappers.actionToBody(action));
     });
   },
