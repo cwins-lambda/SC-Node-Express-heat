@@ -62,5 +62,18 @@ server.post('/projects', (req, res) => {
     })
 });
 
+server.delete('/projects/:id', (req, res) => {
+    const { id } = req.params;
+    dbProject.remove(id)
+        .then(count => {
+            // console.log(count);
+            if (count) {
+                res.status(202).json({ message: 'Project has been deleted'}).end();
+            } else {
+                res.status(404).json({ message: 'The project with the specified ID does not exist.' })
+            }
+        })
+        .catch(error => res.status(500).json({ error: 'The project could not be removed' }));
+});
 
 server.listen(7500, () => console.log('/n== API on port 7.5k ==/n') );
