@@ -141,5 +141,26 @@ server.get('/actions/:id', (req, res) => {
     })
 });
 
+server.post('/actions', (req, res) => {
+    const { description, notes, completed, project_id } = req.body;
+    if (!description || !notes) {
+        res.status(400).json({ errorMessage: 'Please provide both a description and notes for this action.' });
+        return;
+    }
+    dbAction.insert({
+        project_id,
+        description,
+        notes,
+        completed
+    })
+    .then(response => {
+        res.status(201).json(req.body);
+    })
+    .catch(error => {
+        console.error('error', err);
+        res.status(500).json({ error: 'There was an error while saving the action to the database' });
+        return;
+    })
+});
 
 server.listen(7500, () => console.log('/n== API on port 7.5k ==/n') );
