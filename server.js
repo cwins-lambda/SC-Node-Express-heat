@@ -8,11 +8,12 @@ const dbAction = require('./data/helpers/actionModel.js');
 server.use(express.json());
 
 
-// Project routing
+// Generic routing -------------------------
 server.get('/', (req, res) => {
-    res.send('Welcome to Node-Express, an express middleware production');
+    res.send('Welcome to Node-Express-Sprint, an express middleware production');
 } );
 
+// Project routing -------------------------
 server.get('/projects', (req, res) => {
     dbProject.get()
     .then(projects => {
@@ -111,6 +112,34 @@ server.get('/projects/:id/actions', (req, res) => {
     })
 });
 
+// Actions routing -------------------------
+server.get('/actions', (req, res) => {
+    dbAction.get()
+    .then(actions => {
+        res.status(200).json(actions);
+    })
+    .catch(err => {
+        console.error('error', err);
+
+        res.status(500).json({ error: 'The actions information could not be retrieved.' });
+    })
+});
+
+server.get('/actions/:id', (req, res) => {
+    dbAction.get(req.params.id)
+    .then(action => {
+        // console.log(action);
+        if (!action) {
+            res.status(404).json({ message: 'The action with the specified ID does not exist.' });
+            return;
+        }
+        res.status(200).json(action);
+    })
+    .catch(err => {
+        console.error('error', err);
+        res.status(500).json({ error: 'The action information could not be retrieved.'})
+    })
+});
 
 
 server.listen(7500, () => console.log('/n== API on port 7.5k ==/n') );
