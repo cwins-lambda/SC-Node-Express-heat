@@ -95,4 +95,22 @@ server.put('/projects/:id', (req, res) => {
         .catch(err => res.status(500).json({ message: 'The project information could not be modified.' }));
 });
 
+server.get('/projects/:id/actions', (req, res) => {
+    dbProject.getProjectActions(req.params.id)
+    .then(projectActions => {
+        console.log(projectActions.length);
+        if (projectActions.length === 0) {
+            res.status(404).json({ message: 'The project with the specified ID either does not exist or does not have any actions.' });
+            return;
+        }
+        res.status(200).json(projectActions);
+    })
+    .catch(err => {
+        console.error('error', err);
+        res.status(500).json({ error: 'The project information could not be retrieved.'})
+    })
+});
+
+
+
 server.listen(7500, () => console.log('/n== API on port 7.5k ==/n') );
