@@ -76,4 +76,23 @@ server.delete('/projects/:id', (req, res) => {
         .catch(error => res.status(500).json({ error: 'The project could not be removed' }));
 });
 
+server.put('/projects/:id', (req, res) => {
+    const { name, description } = req.body;
+    if (!name || !description) {
+        res.status(400).json({ errorMessage: 'Please provide both the project name and description.' });
+        return;
+    }
+    dbProject.update(req.params.id, req.body)
+        .then(project => {
+            if (project) {
+                res.status(200).json(req.body)
+                // console.log(req.body);
+            } else {
+                res.status(404).json({ message: 'The project with the specified ID does not exist.' })
+            }
+            
+        })
+        .catch(err => res.status(500).json({ message: 'The project information could not be modified.' }));
+});
+
 server.listen(7500, () => console.log('/n== API on port 7.5k ==/n') );
