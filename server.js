@@ -177,4 +177,24 @@ server.delete('/actions/:id', (req, res) => {
         .catch(error => res.status(500).json({ error: 'The action could not be removed' }));
 });
 
+server.put('/actions/:id', (req, res) => {
+    const { notes, description } = req.body;
+    if (!notes || !description) {
+        res.status(400).json({ errorMessage: 'Please provide both the action notes and description.' });
+        return;
+    }
+    dbAction.update(req.params.id, req.body)
+        .then(action => {
+            if (action) {
+                res.status(200).json(req.body)
+                // console.log(req.body);
+            } else {
+                res.status(404).json({ message: 'The action with the specified ID does not exist.' })
+            }
+            
+        })
+        .catch(err => res.status(500).json({ message: 'The action information could not be modified.' }));
+});
+
+
 server.listen(7500, () => console.log('/n== API on port 7.5k ==/n') );
